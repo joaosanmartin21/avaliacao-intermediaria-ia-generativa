@@ -37,6 +37,42 @@ export default function App() {
 
   return (
     <>
+      <header className="top-nav">
+        <div className="top-nav-inner">
+          <a className="brand" href="#" aria-label="Página inicial 60 Sabores">
+            <img
+              className="brand-logo"
+              src="/logo-60-sabores.jpeg"
+              alt="Logo 60 Sabores"
+            />
+          </a>
+
+          <nav className="top-menu" aria-label="Menu superior">
+            <button type="button" className="menu-item active" aria-current="page">
+              Checklist
+            </button>
+            <button
+              type="button"
+              className="menu-item disabled"
+              aria-disabled="true"
+              disabled
+              title="Em breve"
+            >
+              Tela 2
+            </button>
+            <button
+              type="button"
+              className="menu-item disabled"
+              aria-disabled="true"
+              disabled
+              title="Em breve"
+            >
+              Tela 3
+            </button>
+          </nav>
+        </div>
+      </header>
+
       <div className="app-shell">
         <ProgressHeader
           sections={checklistSections}
