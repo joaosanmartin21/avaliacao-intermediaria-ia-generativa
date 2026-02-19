@@ -1,4 +1,4 @@
-export default function SuccessOverlay({ visible }) {
+export default function SuccessOverlay({ visible, onConfirm }) {
   if (!visible) {
     return null;
   }
@@ -12,7 +12,10 @@ export default function SuccessOverlay({ visible }) {
           </svg>
         </div>
         <h2>Dia encerrado com sucesso!</h2>
-        <p>Todas as rotinas operacionais foram concluídas.</p>
+        <p>Todas as rotinas operacionais foram concluidas.</p>
+        <button type="button" className="success-action" onClick={onConfirm}>
+          OK
+        </button>
       </div>
     </div>
   );

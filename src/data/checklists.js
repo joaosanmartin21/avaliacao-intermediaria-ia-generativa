@@ -3,17 +3,17 @@ export const checklistSections = [
     id: "abertura_loja",
     title: "Checkout de abertura da loja",
     items: [
-      { id: "abrir_toldo_ligar_luzes", label: "Abrir toldo e ligar luzes." },
+      { id: "ligar_luzes", label: "Ligar luzes." },
       { id: "abrir_registro_agua", label: "Abrir registro de água." },
       {
         id: "ligar_maquininhas_cartao",
-        label: "Ligar as maquininhas de cartão de crédito.",
+        label: "Ligar maquininhas de cartão de crédito.",
       },
-      { id: "ligar_computador", label: "Ligar o computador." },
+      { id: "ligar_computador", label: "Ligar computador." },
       {
         id: "ligar_balanca_tara_buffet",
         label:
-          "Ligar a balança, colocar a tara na balança, e o peso do buffet de sorvete na balança.",
+          "Ligar balança, colocar a tara na balança e o peso do buffet de sorvete.",
       },
     ],
   },
@@ -27,20 +27,20 @@ export const checklistSections = [
       },
       {
         id: "abrir_caixa_modo_contingencia",
-        label: "Abrir o caixa e entrar no modo de contingência.",
+        label: "Abrir caixa e entrar no modo de contingência.",
       },
       {
         id: "abrir_ifood_pedidos",
-        label: "Tem que acessar e abrir o aplicativo do iFood para abrir loja para pedidos.",
+        label: "Acessar aplicativo do iFood para abrir loja para pedidos.",
       },
       {
         id: "abrir_planilha_chrome",
-        label: "Tem que abrir planilha no chrome para fazer contagem do dinheiro.",
+        label: "Fazer contagem de dinheiro na planilha no chrome.",
       },
       {
         id: "contar_moedas_cedulas_caixa",
         label:
-          "Nessa hora é preciso contar todas moedas e todas as cédulas que tem no caixa para fazer a verificação de quantos reais existe no seu caixa inicial.",
+          "Contar todas moedas e cédulas do caixa para fazer a verificação de quantos reais existe no caixa inicial.",
       },
     ],
   },
@@ -74,7 +74,7 @@ export const checklistSections = [
       },
       {
         id: "armazenar_leite_condensado",
-        label: "Armazenar leite condensado restante em freezer.",
+        label: "Armazenar leite condensado restante no freezer.",
       },
       {
         id: "cobrir_buffet_protecao",
@@ -94,6 +94,11 @@ export const checklistSections = [
         id: "relatorio_maquininhas_desligar",
         label:
           "Retirar relatório de cada máquina de cartão, após relatório as maquininhas são desligadas.",
+      },
+      {
+        id: "preencher_relatorio_planilha_contar_fechamento",
+        label:
+          "Preencher as informações dos relatórios na planilha e contar as moedas e cédulas para o fechamento de caixa.",
       },
       {
         id: "fechar_caixa_sistema",

@@ -1,18 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import ChecklistSection from "./components/ChecklistSection";
+import FreezerMappingScreen from "./components/FreezerMappingScreen";
 import ProgressHeader from "./components/ProgressHeader";
 import SuccessOverlay from "./components/SuccessOverlay";
 import { checklistSections } from "./data/checklists";
-import { clearChecklistState, loadChecklistState, saveChecklistState } from "./utils/storage";
+import {
+  clearChecklistState,
+  loadChecklistState,
+  saveChecklistState,
+} from "./utils/storage";
 
 export default function App() {
   const [statusMap, setStatusMap] = useState(() => loadChecklistState());
+  const [activeView, setActiveView] = useState("checklist");
 
   const allItemIds = useMemo(
-    () =>
-      checklistSections.flatMap((section) =>
-        section.items.map((item) => item.id)
-      ),
+    () => checklistSections.flatMap((section) => section.items.map((item) => item.id)),
     []
   );
 
@@ -39,26 +42,26 @@ export default function App() {
     <>
       <header className="top-nav">
         <div className="top-nav-inner">
-          <a className="brand" href="#" aria-label="Página inicial 60 Sabores">
-            <img
-              className="brand-logo"
-              src="/logo-60-sabores.jpeg"
-              alt="Logo 60 Sabores"
-            />
+          <a className="brand" href="#" aria-label="Pagina inicial 60 Sabores">
+            <img className="brand-logo" src="/logo-60-sabores.jpeg" alt="Logo 60 Sabores" />
           </a>
 
           <nav className="top-menu" aria-label="Menu superior">
-            <button type="button" className="menu-item active" aria-current="page">
+            <button
+              type="button"
+              className={`menu-item ${activeView === "checklist" ? "active" : ""}`}
+              aria-current={activeView === "checklist" ? "page" : undefined}
+              onClick={() => setActiveView("checklist")}
+            >
               Checklist
             </button>
             <button
               type="button"
-              className="menu-item disabled"
-              aria-disabled="true"
-              disabled
-              title="Em breve"
+              className={`menu-item ${activeView === "mapping" ? "active" : ""}`}
+              aria-current={activeView === "mapping" ? "page" : undefined}
+              onClick={() => setActiveView("mapping")}
             >
-              Tela 2
+              Mapeamento
             </button>
             <button
               type="button"
@@ -73,26 +76,34 @@ export default function App() {
         </div>
       </header>
 
-      <div className="app-shell">
-        <ProgressHeader
-          sections={checklistSections}
-          statusMap={statusMap}
-          onReset={handleReset}
-        />
-
-        <main className="section-grid">
-          {checklistSections.map((section) => (
-            <ChecklistSection
-              key={section.id}
-              section={section}
+      {activeView === "checklist" ? (
+        <>
+          <div className="app-shell">
+            <ProgressHeader
+              sections={checklistSections}
               statusMap={statusMap}
-              onToggle={handleToggle}
+              onReset={handleReset}
             />
-          ))}
-        </main>
-      </div>
 
-      <SuccessOverlay visible={finishedDay} />
+            <main className="section-grid">
+              {checklistSections.map((section) => (
+                <ChecklistSection
+                  key={section.id}
+                  section={section}
+                  statusMap={statusMap}
+                  onToggle={handleToggle}
+                />
+              ))}
+            </main>
+          </div>
+
+          <SuccessOverlay visible={finishedDay} onConfirm={handleReset} />
+        </>
+      ) : (
+        <div className="app-shell app-shell-mapping">
+          <FreezerMappingScreen />
+        </div>
+      )}
     </>
   );
 }
