@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
+import AssistantScreen from "./components/AssistantScreen";
 import ChecklistSection from "./components/ChecklistSection";
 import FreezerMappingScreen from "./components/FreezerMappingScreen";
+import ItemCatalogScreen from "./components/ItemCatalogScreen";
+import PurchaseOrdersScreen from "./components/PurchaseOrdersScreen";
 import ProgressHeader from "./components/ProgressHeader";
 import SuccessOverlay from "./components/SuccessOverlay";
 import { checklistSections } from "./data/checklists";
@@ -38,6 +41,44 @@ export default function App() {
     clearChecklistState();
   }
 
+  function renderCurrentView() {
+    if (activeView === "checklist") {
+      return (
+        <>
+          <div className="app-shell">
+            <ProgressHeader
+              sections={checklistSections}
+              statusMap={statusMap}
+              onReset={handleReset}
+            />
+
+            <main className="section-grid">
+              {checklistSections.map((section) => (
+                <ChecklistSection
+                  key={section.id}
+                  section={section}
+                  statusMap={statusMap}
+                  onToggle={handleToggle}
+                />
+              ))}
+            </main>
+          </div>
+
+          <SuccessOverlay visible={finishedDay} onConfirm={handleReset} />
+        </>
+      );
+    }
+
+    return (
+      <div className="app-shell app-shell-mapping">
+        {activeView === "mapping" ? <FreezerMappingScreen /> : null}
+        {activeView === "items" ? <ItemCatalogScreen /> : null}
+        {activeView === "orders" ? <PurchaseOrdersScreen /> : null}
+        {activeView === "assistant" ? <AssistantScreen /> : null}
+      </div>
+    );
+  }
+
   return (
     <>
       <header className="top-nav">
@@ -65,45 +106,33 @@ export default function App() {
             </button>
             <button
               type="button"
-              className="menu-item disabled"
-              aria-disabled="true"
-              disabled
-              title="Em breve"
+              className={`menu-item ${activeView === "items" ? "active" : ""}`}
+              aria-current={activeView === "items" ? "page" : undefined}
+              onClick={() => setActiveView("items")}
             >
-              Tela 3
+              Itens
+            </button>
+            <button
+              type="button"
+              className={`menu-item ${activeView === "orders" ? "active" : ""}`}
+              aria-current={activeView === "orders" ? "page" : undefined}
+              onClick={() => setActiveView("orders")}
+            >
+              Pedidos
+            </button>
+            <button
+              type="button"
+              className={`menu-item ${activeView === "assistant" ? "active" : ""}`}
+              aria-current={activeView === "assistant" ? "page" : undefined}
+              onClick={() => setActiveView("assistant")}
+            >
+              Assistente
             </button>
           </nav>
         </div>
       </header>
 
-      {activeView === "checklist" ? (
-        <>
-          <div className="app-shell">
-            <ProgressHeader
-              sections={checklistSections}
-              statusMap={statusMap}
-              onReset={handleReset}
-            />
-
-            <main className="section-grid">
-              {checklistSections.map((section) => (
-                <ChecklistSection
-                  key={section.id}
-                  section={section}
-                  statusMap={statusMap}
-                  onToggle={handleToggle}
-                />
-              ))}
-            </main>
-          </div>
-
-          <SuccessOverlay visible={finishedDay} onConfirm={handleReset} />
-        </>
-      ) : (
-        <div className="app-shell app-shell-mapping">
-          <FreezerMappingScreen />
-        </div>
-      )}
+      {renderCurrentView()}
     </>
   );
 }
