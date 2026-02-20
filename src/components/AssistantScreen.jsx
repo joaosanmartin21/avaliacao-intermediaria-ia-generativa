@@ -8,13 +8,14 @@ import {
   listConversations,
   listMessages,
 } from "../data/assistantRepository";
+import { requestAssistantReply } from "../services/assistantApi";
 import { formatDateTime, getCurrentMonthRef } from "../utils/formatters";
 
 function buildMockAssistantReply(monthRef) {
   return [
-    "Relatorio simulado gerado para validacao da interface.",
+    "Resposta local simulada: endpoint indisponivel no momento.",
     `Mes analisado: ${monthRef}.`,
-    "Integracao com LLM e dados reais sera conectada em seguida.",
+    "Inicie o backend da API para receber resposta do endpoint publicado.",
   ].join(" ");
 }
 
@@ -86,10 +87,25 @@ export default function AssistantScreen() {
         content,
       });
 
+      let assistantContent = "";
+      try {
+        const endpointResponse = await requestAssistantReply({
+          message: content,
+          monthRef,
+        });
+        assistantContent =
+          typeof endpointResponse.reply === "string" && endpointResponse.reply.trim()
+            ? endpointResponse.reply.trim()
+            : buildMockAssistantReply(monthRef);
+      } catch (error) {
+        console.error(error);
+        assistantContent = buildMockAssistantReply(monthRef);
+      }
+
       await addMessage({
         conversationId,
         role: "assistant",
-        content: buildMockAssistantReply(monthRef),
+        content: assistantContent,
       });
     } finally {
       setIsSending(false);

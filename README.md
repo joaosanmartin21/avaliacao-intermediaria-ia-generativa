@@ -139,6 +139,61 @@ npm run preview
 - Repositorio GitHub: **[PENDENTE CRIACAO REMOTA]**
 
 ## 10. Proximos passos
-1. Publicar endpoint (ex.: Streamlit Cloud, Hugging Face Spaces, ngrok ou Vercel).
+1. Publicar endpoint na Vercel.
 2. Implementar Tela 2 e Tela 3 do projeto.
 3. Integrar backend/API para evolucao futura com IA.
+
+## 11. Endpoint funcional publicado via internet
+Foi adicionado um backend HTTP no projeto para atender o criterio de endpoint funcional.
+
+### Rotas disponiveis
+- `GET /api/health`
+- `POST /api/assistant/chat`
+- `POST /api/reports/cost`
+
+### Estrutura para deploy na Vercel
+- Funcoes em `api/health.js`, `api/assistant/chat.js` e `api/reports/cost.js`.
+- Frontend React/Vite consumindo `"/api"` no mesmo dominio.
+
+### Como rodar localmente
+Em um terminal:
+```bash
+npm run api
+```
+
+Em outro terminal:
+```bash
+npm run dev
+```
+
+### Exemplo de teste local
+```bash
+curl http://localhost:8787/api/health
+```
+
+```bash
+curl -X POST http://localhost:8787/api/assistant/chat \
+  -H "Content-Type: application/json" \
+  -d "{\"message\":\"resuma custos\",\"monthRef\":\"2026-02\"}"
+```
+
+### Publicar manualmente na Vercel
+1. Suba o repositorio no GitHub.
+2. Importe o projeto na Vercel.
+3. Configure:
+```bash
+Framework Preset: Vite
+Build Command: npm run build
+Output Directory: dist
+```
+4. Faca o deploy.
+5. Valide em producao:
+```bash
+curl https://SEU-PROJETO.vercel.app/api/health
+curl -X POST https://SEU-PROJETO.vercel.app/api/assistant/chat \
+  -H "Content-Type: application/json" \
+  -d "{\"message\":\"resuma custos\",\"monthRef\":\"2026-02\"}"
+```
+
+### Variavel de ambiente (opcional)
+Defina `VITE_ASSISTANT_API_URL` apenas se quiser apontar o frontend para uma API externa.
