@@ -1,119 +1,112 @@
-# Sistema de Checklist Operacional para Loja de Sorvetes (Prototipo sem IA)
+# Avaliacao Intermediaria - IA Generativa
 
-## 1. Contexto da avaliacao
-Este repositorio foi desenvolvido para a **Avaliacao Intermediaria de IA Generativa**.
+## Projeto
+Sistema para organizar a operacao de uma sorveteria, com foco em checklist diario, controle de estoque, pedidos e preparacao para analises com IA no futuro.
 
-Objetivo da etapa:
-- usar um agente de codificacao para construir interface e estrutura da aplicacao;
-- **nao integrar LLM nesta fase**;
-- simular o fluxo real de uso com dados e comportamentos locais.
+## Links da entrega
+- Endpoint web: https://avaliacao-intermediaria-ia-generati.vercel.app/
+- Repositorio GitHub: https://github.com/joaosanmartin21/avaliacao-intermediaria-ia-generativa
 
-## 2. Problema e solucao proposta
-### Problema
-A operacao diaria da loja envolve muitas tarefas repetitivas em momentos criticos (abertura, caixa, limpeza e fechamento). Quando uma tarefa e esquecida, o impacto aparece no atendimento, no controle financeiro e na higiene.
+## O problema que o sistema resolve
+A loja tem tarefas operacionais e de estoque que ficam espalhadas (anotacoes manuais, memoria da equipe e conferencias repetitivas). Isso gera:
+- esquecimento de rotinas diarias;
+- dificuldade para visualizar rapidamente o estado dos freezers;
+- pouca previsibilidade de compra semanal;
+- falta de base consolidada para calcular custo real do buffet e lucro.
 
-### Solucao proposta
-Construir uma aplicacao com 3 telas:
-1. Tela de checklists operacionais do dia (implementada nesta entrega).
-2. Tela de acompanhamento/controle gerencial (planejada).
-3. Tela com apoio de IA para recomendacoes e analise (planejada para fase futura).
+A solucao proposta foi montar uma aplicacao com fluxo completo da operacao, sem integrar LLM real nesta etapa da avaliacao.
 
-Nesta entrega foi implementada a **Tela 1**, com foco em confiabilidade operacional.
+## O que o sistema faz hoje (5 telas)
+1. Checklist diario de rotinas
+- Tela operacional para abertura, caixa, limpeza e fechamento.
+- Nao usa IA nesta etapa.
+- Objetivo: reduzir falhas no dia a dia do funcionario.
 
-## 3. Escopo implementado nesta entrega (Tela 1)
-### Funcionalidades
-- 4 blocos de checklist:
-  - Checkout de abertura da loja
-  - Checkout de controle de caixa
-  - Checkout de controle de limpeza
-  - Checkout de fechamento de caixa
-- Marcacao e desmarcacao de cada item com checkbox.
-- Indicador de progresso por secao e progresso total.
-- Persistencia local com `localStorage` (estado mantido apos refresh).
-- Botao para limpar o progresso do dia.
-- Animacao final:
-  - mensagem **"Dia encerrado com sucesso!"**
-  - exibida somente quando **100% dos itens** foram marcados.
+2. Mapeamento de freezers
+- Cadastro visual dos freezers e sabores por caixa.
+- Controle de nivel dos sabores para identificar falta de reposicao.
+- Estrutura pronta para gerar relatorio inteligente de compra.
 
-## 4. Como a IA sera integrada no futuro
-Nesta fase nao ha integracao com IA/LLM por exigencia da avaliacao. A arquitetura foi pensada para permitir evolucao futura:
+3. Cadastro de itens
+- Cadastro e edicao de itens de estoque (caldas, frutas, coberturas e outros).
+- Registro de nome e preco unitario para servir de base aos pedidos e custos.
 
-1. Sugestoes inteligentes por contexto:
-   - alertar etapas esquecidas com base no horario e no historico.
-2. Analise de risco operacional:
-   - identificar padroes de falha recorrente no fechamento.
-3. Assistente de suporte:
-   - responder "o que fazer agora?" com base no estado atual dos checklists.
+4. Pedidos por mes
+- Tela para registrar pedidos semanais.
+- Vincula os pedidos ao mes de referencia.
+- Permite acompanhar historico e status dos pedidos.
 
-## 5. Escolhas de design e arquitetura
-### Stack
-- Frontend: `React + Vite`
-- Persistencia local: `localStorage`
-- Sem backend nesta fase
+5. Assistente (estrutura pronta)
+- Chat para duvidas de fluxo geral da sorveteria.
+- Area de relatorio de custo mensal simulada.
+- Atualmente responde com mock/placeholder, sem LLM real.
 
-### Decisoes tecnicas
-1. `React + Vite` para acelerar iteracao da UI e manter base preparada para escalabilidade.
-2. Separacao por componentes:
-   - `ProgressHeader`
-   - `ChecklistSection`
-   - `SuccessOverlay`
-3. Dados de checklist centralizados em arquivo dedicado (`src/data/checklists.js`) para facilitar manutencao.
-4. Chave versionada no storage (`loja_checklists_v1`) para futuras mudancas de estrutura sem quebrar dados.
-5. Layout responsivo para desktop e mobile.
+## Como a IA sera integrada no futuro
+Nesta entrega, a IA foi mantida em modo mock para atender o enunciado da avaliacao. Na evolucao do projeto, a integracao prevista e:
+- gerar media de custo do buffet para a loja;
+- estimar lucro com base em custo, pedidos e consumo;
+- manter uma lista de sabores com preco por sabor;
+- no fim do mes, gerar relatorio com quantidade vendida por sabor;
+- responder perguntas operacionais e financeiras no assistente com contexto real da base.
 
-### Estrutura de pastas
-```text
-.
-|-- index.html
-|-- package.json
-|-- vite.config.js
-|-- src
-|   |-- App.jsx
-|   |-- main.jsx
-|   |-- styles.css
-|   |-- components
-|   |   |-- ChecklistSection.jsx
-|   |   |-- ProgressHeader.jsx
-|   |   `-- SuccessOverlay.jsx
-|   |-- data
-|   |   `-- checklists.js
-|   `-- utils
-|       `-- storage.js
-`-- README.md
-```
+Em resumo: o sistema atual ja coleta e organiza os dados que vao alimentar a LLM depois.
 
-## 6. Experiencia com o agente de codificacao
+## Escolhas de design
+### Arquitetura e stack
+- Frontend: React + Vite.
+- Persistencia local: `localStorage` (checklist e mapeamento) e IndexedDB via Dexie (itens, pedidos e assistente).
+- API mock para deploy: rotas em `api/*` (Vercel serverless) e servidor local em `server/index.js`.
+
+### Por que essa arquitetura
+- React + Vite acelerou iteracao de telas e componentes.
+- Dexie facilitou manter dados estruturados no browser sem depender de banco externo agora.
+- Endpoints mock permitiram validar o fluxo da UI sem quebrar a regra de "sem LLM real".
+- Separacao por telas/componentes deixou a base preparada para integrar IA sem reescrever a interface.
+
+### Alternativas consideradas
+- Fazer tudo em uma tela unica: descartado por dificultar uso diario e manutencao.
+- Integrar backend + banco remoto ja nesta fase: descartado para priorizar entrega funcional da interface no prazo da avaliacao.
+
+## Experiencia com o agente de codificacao
 ### O que funcionou bem
-1. Geracao rapida da base de projeto e organizacao de componentes.
-2. Implementacao do fluxo completo de checklist com persistencia local.
-3. Criacao de UI responsiva com animacao condicional de sucesso.
-4. Validacao final com build de producao.
+- O agente gerou bem a estrutura inicial do projeto e a divisao de componentes.
+- O frontend ficou estavel, sem bugs criticos durante os ajustes principais.
+- Foi possivel evoluir em ciclos curtos com testes e refinos de layout.
 
-### Prompts que trouxeram bons resultados
-1. "Implement the plan."  
-   Resultado: criacao completa da tela com componentes, dados, estilos e regra de conclusao.
-2. "Preciso que me ajude a implementar isso... primeira tela com checklists..."  
-   Resultado: definicao clara dos requisitos funcionais de cada bloco.
+### Prompt que teve bom resultado
+- "Preciso ajustar duas coisas. A estrutura inicial, na verdade deve ter 7 freezer de 12 sabores tendo um deles o titulo "Zeros" e 1 freezer de 8 sabores com o titulo "Acai". O restante dos freezer nao precisa de titulo, pode remover alias essa frase "Freezer em formato real: 2 fileiras x 6 caixas." Utilize o mcp sequential-thinking para fazer isso."
 
-### O que nao funcionou bem / limitacoes encontradas
-1. Execucao inicial de `npm` bloqueada por politica do PowerShell no ambiente.
-2. Build inicial com erro de permissao (`EPERM`) no sandbox para processo do `esbuild`.
-3. Necessidade de ajuste de permissao para concluir instalacao/build no ambiente de desenvolvimento.
+Resultado: a estrutura dos freezers foi ajustada rapidamente e com boa aderencia ao que era esperado.
 
-### Intervencoes manuais importantes
-1. Definicao dos textos finais dos checklists exatamente conforme operacao da loja.
-2. Revisao de IDs unicos para evitar conflito entre itens.
-3. Ajustes de copy e organizacao do README para criterios da avaliacao.
+### O que nao funcionou bem
+- Em um prompt pedindo implementacao de 2 telas ao mesmo tempo, o resultado perdeu qualidade em uma das telas.
+- Um grid ficou ruim e precisou de ajuste manual com novos prompts de refinamento.
+- Na parte de deploy, a orientacao com ngrok nao foi simples de executar no meu ambiente.
 
-## 7. Como executar localmente
-### Requisitos
-- Node.js 18+ (ou superior)
-- npm
+### Intervencao manual e limitacoes
+- Precisei quebrar tarefas grandes em prompts menores para manter qualidade.
+- Precisei revisar layout manualmente quando o grid saiu fora do esperado.
+- Para publicar, optei por deploy manual na Vercel (em vez de ngrok).
 
-### Passos
+### O que faria diferente
+- Separaria todas as telas em tarefas menores desde o inicio.
+- Definiria criterios visuais de grid mais detalhados antes de pedir implementacao.
+- Escolheria Vercel como caminho principal de deploy desde o primeiro dia.
+
+## Evidencia de uso de agente de codificacao
+- Desenvolvimento feito com iteracoes de prompt para estrutura, telas e ajustes finos.
+- Uso de prompts especificos para regras de negocio dos freezers.
+- Refinos de UI e fluxo feitos por ciclos curtos de gerar, testar, corrigir.
+
+## Como executar localmente
 ```bash
 npm install
 npm run dev
+```
+
+Para rodar a API local mock:
+```bash
+npm run api
 ```
 
 Build de producao:
@@ -122,78 +115,7 @@ npm run build
 npm run preview
 ```
 
-## 8. Evidencias de atendimento aos criterios da avaliacao
-1. Endpoint funcional (parcial nesta etapa):
-   - aplicacao local funcional e build de producao gerada.
-2. Complexidade:
-   - fluxo operacional dividido em multiplas secoes com 32 tarefas.
-3. Repositorio:
-   - estrutura organizada por componentes, dados e utilitarios.
-4. README:
-   - inclui problema, solucao, design, o que funcionou e o que nao funcionou.
-5. Uso de agente:
-   - desenvolvimento conduzido com prompts iterativos e validacao tecnica.
-
-## 9. Links de entrega
-- Endpoint publico: **[PENDENTE PUBLICACAO]**
-- Repositorio GitHub: **[PENDENTE CRIACAO REMOTA]**
-
-## 10. Proximos passos
-1. Publicar endpoint na Vercel.
-2. Implementar Tela 2 e Tela 3 do projeto.
-3. Integrar backend/API para evolucao futura com IA.
-
-## 11. Endpoint funcional publicado via internet
-Foi adicionado um backend HTTP no projeto para atender o criterio de endpoint funcional.
-
-### Rotas disponiveis
+## Rotas mock disponiveis
 - `GET /api/health`
 - `POST /api/assistant/chat`
 - `POST /api/reports/cost`
-
-### Estrutura para deploy na Vercel
-- Funcoes em `api/health.js`, `api/assistant/chat.js` e `api/reports/cost.js`.
-- Frontend React/Vite consumindo `"/api"` no mesmo dominio.
-
-### Como rodar localmente
-Em um terminal:
-```bash
-npm run api
-```
-
-Em outro terminal:
-```bash
-npm run dev
-```
-
-### Exemplo de teste local
-```bash
-curl http://localhost:8787/api/health
-```
-
-```bash
-curl -X POST http://localhost:8787/api/assistant/chat \
-  -H "Content-Type: application/json" \
-  -d "{\"message\":\"resuma custos\",\"monthRef\":\"2026-02\"}"
-```
-
-### Publicar manualmente na Vercel
-1. Suba o repositorio no GitHub.
-2. Importe o projeto na Vercel.
-3. Configure:
-```bash
-Framework Preset: Vite
-Build Command: npm run build
-Output Directory: dist
-```
-4. Faca o deploy.
-5. Valide em producao:
-```bash
-curl https://SEU-PROJETO.vercel.app/api/health
-curl -X POST https://SEU-PROJETO.vercel.app/api/assistant/chat \
-  -H "Content-Type: application/json" \
-  -d "{\"message\":\"resuma custos\",\"monthRef\":\"2026-02\"}"
-```
-
-### Variavel de ambiente (opcional)
-Defina `VITE_ASSISTANT_API_URL` apenas se quiser apontar o frontend para uma API externa.
