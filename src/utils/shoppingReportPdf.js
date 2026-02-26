@@ -8,24 +8,9 @@ function sanitizeText(value, fallback = "") {
   if (typeof value !== "string") {
     return fallback;
   }
+
   const trimmed = value.trim();
   return trimmed || fallback;
-}
-
-function formatLevel(level) {
-  if (level === "full") {
-    return "Cheio";
-  }
-  if (level === "half") {
-    return "1/2";
-  }
-  if (level === "quarter") {
-    return "1/4";
-  }
-  if (level === "empty") {
-    return "Vazio";
-  }
-  return "Nao informado";
 }
 
 function formatDate(dateText) {
@@ -39,7 +24,7 @@ function formatDate(dateText) {
 function buildFilename(generatedAt) {
   const date = new Date(generatedAt);
   if (Number.isNaN(date.getTime())) {
-    return "relatorio-compras-ia.pdf";
+    return "relatorio-compras.pdf";
   }
 
   const year = date.getFullYear();
@@ -51,6 +36,38 @@ function buildFilename(generatedAt) {
   return `relatorio-compras-${year}${month}${day}-${hour}${minute}.pdf`;
 }
 
+function buildAlphabeticalFlavorSummary(byFreezer) {
+  const accumulator = new Map();
+
+  for (const freezer of toArray(byFreezer)) {
+    for (const item of toArray(freezer?.flavorTotals)) {
+      const flavor = sanitizeText(item?.flavor);
+      if (!flavor) {
+        continue;
+      }
+
+      const key = flavor.toLocaleLowerCase("pt-BR");
+      const boxes = Math.max(1, Number.parseInt(item?.boxesNeedingRestock, 10) || 1);
+      const current = accumulator.get(key);
+
+      if (!current) {
+        accumulator.set(key, {
+          flavor,
+          boxes,
+        });
+      } else {
+        current.boxes += boxes;
+      }
+    }
+  }
+
+  return [...accumulator.values()].sort((left, right) =>
+    left.flavor.localeCompare(right.flavor, "pt-BR", {
+      sensitivity: "base",
+    })
+  );
+}
+
 export function downloadShoppingReportPdf({ report, meta }) {
   const doc = new jsPDF({
     orientation: "portrait",
@@ -58,13 +75,13 @@ export function downloadShoppingReportPdf({ report, meta }) {
     format: "a4",
   });
 
-  const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
+  const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 40;
   const contentWidth = pageWidth - margin * 2;
   let cursorY = margin;
 
-  function ensureSpace(minHeight = 18) {
+  function ensureSpace(minHeight = 16) {
     if (cursorY + minHeight > pageHeight - margin) {
       doc.addPage();
       cursorY = margin;
@@ -93,44 +110,31 @@ export function downloadShoppingReportPdf({ report, meta }) {
     cursorY += height;
   }
 
-  const overview = report?.overview ?? {};
   const byFreezer = toArray(report?.byFreezer).sort((left, right) => {
-    const leftOrder = Number.parseInt(left?.order, 10);
-    const rightOrder = Number.parseInt(right?.order, 10);
-    if (Number.isFinite(leftOrder) && Number.isFinite(rightOrder) && leftOrder !== rightOrder) {
+    const leftOrder = Number.parseInt(left?.order, 10) || 0;
+    const rightOrder = Number.parseInt(right?.order, 10) || 0;
+    if (leftOrder !== rightOrder) {
       return leftOrder - rightOrder;
     }
+
     return sanitizeText(left?.freezerName).localeCompare(
       sanitizeText(right?.freezerName),
       "pt-BR",
-      { sensitivity: "base" }
+      {
+        sensitivity: "base",
+      }
     );
   });
+  const alphabeticalFlavors = buildAlphabeticalFlavorSummary(byFreezer);
 
-  writeText("Relatorio de Compras por Freezer", { fontSize: 18, bold: true });
+  writeText("Relatório de Compras", { fontSize: 18, bold: true });
   writeText(`Gerado em: ${formatDate(meta?.generatedAt)}`, { fontSize: 10 });
-  writeText(
-    `Fonte: ${sanitizeText(meta?.provider, "desconhecido")} | Modelo: ${sanitizeText(meta?.model, "desconhecido")}`,
-    { fontSize: 10 }
-  );
-  addSpacer(6);
-
-  writeText("Resumo geral", { fontSize: 12, bold: true });
-  writeText(
-    `Freezers: ${overview.totalFreezers ?? 0} | Slots mapeados: ${overview.mappedSlots ?? 0}/${overview.totalSlots ?? 0}`,
-    { fontSize: 10 }
-  );
-  writeText(
-    `Slots com reposicao: ${overview.slotsNeedingRestock ?? 0} | Sabores para compra: ${overview.totalFlavorsToBuy ?? 0}`,
-    { fontSize: 10 }
-  );
-  addSpacer(6);
-
-  writeText("Listagem por freezer", { fontSize: 12, bold: true });
-  addSpacer(2);
+  addSpacer(10);
 
   if (byFreezer.length === 0) {
-    writeText("Nenhum freezer com dados de reposicao no relatorio.", { fontSize: 10 });
+    writeText("Nenhum slot com reposicao no momento.", { fontSize: 11 });
+    doc.save(buildFilename(meta?.generatedAt));
+    return;
   }
 
   for (const freezer of byFreezer) {
@@ -139,7 +143,8 @@ export function downloadShoppingReportPdf({ report, meta }) {
     const freezerLabel = Number.isFinite(freezerOrder)
       ? `${freezerOrder}. ${freezerName}`
       : freezerName;
-    const slotsNeedingRestock = toArray(freezer?.slotsNeedingRestock).sort(
+
+    const slots = toArray(freezer?.slotsNeedingRestock).sort(
       (left, right) =>
         (Number.parseInt(left?.position, 10) || 0) -
         (Number.parseInt(right?.position, 10) || 0)
@@ -150,67 +155,50 @@ export function downloadShoppingReportPdf({ report, meta }) {
       })
     );
 
-    addSpacer(8);
-    writeText(`Freezer ${freezerLabel}`, { fontSize: 11, bold: true });
+    addSpacer(6);
+    writeText(`Freezer ${freezerLabel}`, { fontSize: 12, bold: true });
 
-    if (slotsNeedingRestock.length === 0) {
-      writeText("Sem sabores para reposicao neste freezer.", {
-        fontSize: 10,
-        indent: 10,
-      });
+    if (slots.length === 0) {
+      writeText("Sem reposicao neste freezer.", { fontSize: 10, indent: 12 });
       continue;
     }
 
-    writeText("Sabores por slot (ordem):", { fontSize: 10, bold: true, indent: 10 });
-    for (const slot of slotsNeedingRestock) {
-      const slotPosition = Number.parseInt(slot?.position, 10) || 0;
+    for (const slot of slots) {
+      const position = Number.parseInt(slot?.position, 10) || 0;
       const flavor = sanitizeText(slot?.flavor, "Sabor nao definido");
-      const topLevel = formatLevel(slot?.topLevel);
-      const bottomLevel = formatLevel(slot?.bottomLevel);
       const boxes = Math.max(1, Number.parseInt(slot?.boxesNeedingRestock, 10) || 1);
+
       writeText(
-        `Slot ${String(slotPosition).padStart(2, "0")} - ${flavor} | Cima: ${topLevel} | Baixo: ${bottomLevel} | Reposicao: ${boxes} caixa(s)`,
-        { fontSize: 9, indent: 18 }
+        `Slot ${String(position).padStart(2, "0")} - ${flavor} - ${boxes} caixa(s) para repor`,
+        { fontSize: 10, indent: 12 }
       );
-
-      const reasons = toArray(slot?.reasons)
-        .filter((reason) => typeof reason === "string")
-        .map((reason) => reason.trim())
-        .filter(Boolean);
-      if (reasons.length > 0) {
-        writeText(`Motivo: ${reasons.join(", ")}`, {
-          fontSize: 8,
-          indent: 30,
-        });
-      }
     }
 
-    addSpacer(4);
-    writeText("Total por sabor:", { fontSize: 10, bold: true, indent: 10 });
-    for (const flavorTotal of flavorTotals) {
-      const flavor = sanitizeText(flavorTotal?.flavor, "Sabor nao definido");
-      const boxes = Math.max(1, Number.parseInt(flavorTotal?.boxesNeedingRestock, 10) || 1);
-      writeText(`${flavor}: ${boxes} caixa(s)`, { fontSize: 9, indent: 18 });
+    addSpacer(3);
+    writeText("Total por sabor:", { fontSize: 10, bold: true, indent: 12 });
+    for (const item of flavorTotals) {
+      const flavor = sanitizeText(item?.flavor, "Sabor nao definido");
+      const boxes = Math.max(1, Number.parseInt(item?.boxesNeedingRestock, 10) || 1);
+      writeText(`${flavor}: ${boxes} caixa(s)`, { fontSize: 9, indent: 20 });
     }
-
-    writeText(
-      `Total de caixas para reposicao neste freezer: ${Math.max(
-        0,
-        Number.parseInt(freezer?.totalBoxesNeedingRestock, 10) || 0
-      )}`,
-      { fontSize: 9, bold: true, indent: 10 }
-    );
   }
 
-  const warnings = toArray(report?.warnings)
-    .filter((warning) => typeof warning === "string")
-    .map((warning) => warning.trim())
-    .filter(Boolean);
-  if (warnings.length > 0) {
-    addSpacer(8);
-    writeText("Alertas:", { fontSize: 11, bold: true });
-    for (const warning of warnings) {
-      writeText(`- ${warning}`, { fontSize: 9, indent: 10 });
+  doc.addPage();
+  cursorY = margin;
+
+  writeText("Resumo de Compras", { fontSize: 16, bold: true });
+  writeText("Lista total de caixas para reposição.", {
+    fontSize: 10,
+  });
+  addSpacer(10);
+
+  if (alphabeticalFlavors.length === 0) {
+    writeText("Nenhum sabor com reposicao no momento.", { fontSize: 11 });
+  } else {
+    for (const item of alphabeticalFlavors) {
+      writeText(`${item.flavor}: ${item.boxes} caixa(s)`, {
+        fontSize: 10,
+      });
     }
   }
 
