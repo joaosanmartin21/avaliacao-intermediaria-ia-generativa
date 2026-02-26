@@ -420,7 +420,11 @@ export default function AssistantScreen() {
         </aside>
 
         <section className="assistant-main">
-          <MonthlyCostMockCard monthRef={monthRef} onChangeMonth={setMonthRef} />
+          <MonthlyCostMockCard
+            monthRef={monthRef}
+            onChangeMonth={setMonthRef}
+            orders={monthlyOrders}
+          />
           <AssistantChatShell
             messages={messages}
             onSendMessage={handleSendMessage}
