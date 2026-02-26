@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 
 const TOP_LEVEL_OPTIONS = [
   { value: "full", label: "Cheio" },
@@ -38,7 +38,7 @@ export default function SlotEditorPanel({ freezer, slot, onSave, onClear }) {
       <section className="mapping-card slot-editor-card">
         <header className="mapping-card-header">
           <h3>Editor de caixa</h3>
-          <p>Selecione um slot do freezer para preencher o sabor e os niveis.</p>
+          <p>Selecione um slot do freezer para preencher o sabor e os níveis.</p>
         </header>
       </section>
     );
@@ -75,14 +75,14 @@ export default function SlotEditorPanel({ freezer, slot, onSave, onClear }) {
           {freezer.title} - Caixa #{slot.position}
         </h3>
         <p>
-          Preencha o sabor e os niveis da caixa de cima e da caixa de baixo
-          (reposicao).
+          Preencha o sabor e os níveis da caixa de cima e da caixa de baixo
+          (reposição).
         </p>
       </header>
 
       <form className="slot-editor-form" onSubmit={handleSave}>
         <label>
-          Sabor (obrigatorio)
+          Sabor (obrigatório)
           <input
             type="text"
             value={flavor}
@@ -93,7 +93,7 @@ export default function SlotEditorPanel({ freezer, slot, onSave, onClear }) {
         </label>
 
         <label>
-          Nivel da caixa de cima
+          Nível da caixa de cima
           <select
             value={topLevel}
             onChange={(event) => setTopLevel(event.target.value)}
@@ -107,7 +107,7 @@ export default function SlotEditorPanel({ freezer, slot, onSave, onClear }) {
         </label>
 
         <label>
-          Caixa de baixo (reposicao)
+          Caixa de baixo (reposição)
           <select
             value={bottomLevel}
             onChange={(event) => setBottomLevel(event.target.value)}

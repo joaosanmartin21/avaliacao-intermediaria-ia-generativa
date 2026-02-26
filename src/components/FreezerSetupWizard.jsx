@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 
 export default function FreezerSetupWizard({ visible, onConfirm }) {
   const [countOf12, setCountOf12] = useState(7);
@@ -35,7 +35,7 @@ export default function FreezerSetupWizard({ visible, onConfirm }) {
         <h2>Configurar estrutura de freezers</h2>
         <p>
           Defina a quantidade inicial de freezers para o mapeamento visual dos
-          sabores. Sugestao atual: 7 freezers de 12 e 1 freezer de 8.
+          sabores. Sugestão atual: 7 freezers de 12 e 1 freezer de 8.
         </p>
 
         <form onSubmit={handleSubmit} className="setup-form">

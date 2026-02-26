@@ -1,4 +1,4 @@
-import { formatCurrencyBRL, formatMonthRef } from "../utils/formatters";
+﻿import { formatCurrencyBRL, formatMonthRef } from "../utils/formatters";
 
 function generateMockReport(monthRef) {
   const [yearText = "2026", monthText = "01"] = (monthRef || "").split("-");
@@ -9,8 +9,8 @@ function generateMockReport(monthRef) {
   const estimatedCost = 1800 + (seed % 2200);
   const operationalCost = 900 + (seed % 1300);
   const alerts = [
-    "Reforcar compra de embalagens e complementos.",
-    "Reavaliar precos de itens com maior oscilacao.",
+    "Reforçar compra de embalagens e complementos.",
+    "Reavaliar preços de itens com maior oscilação.",
     "Comparar custo por fornecedor antes do fechamento do pedido.",
   ];
 
@@ -29,13 +29,13 @@ export default function MonthlyCostMockCard({ monthRef, onChangeMonth }) {
       <header className="mapping-card-header">
         <h3>Painel mensal (estimativa local)</h3>
         <p>
-          Indicadores deterministicos para apoiar o chat com IA local e comparar
-          tendencia de custos por mes.
+          Indicadores determinísticos para apoiar o chat com IA local e comparar
+          tendência de custos por mês.
         </p>
       </header>
 
       <label className="inventory-month-filter">
-        Mes de referencia
+        Mês de referência
         <input
           type="month"
           value={monthRef}
@@ -54,7 +54,7 @@ export default function MonthlyCostMockCard({ monthRef, onChangeMonth }) {
         </article>
       </div>
 
-      <p className="mock-month-label">Periodo: {formatMonthRef(monthRef)}</p>
+      <p className="mock-month-label">Período: {formatMonthRef(monthRef)}</p>
 
       <ul className="mock-alert-list">
         {report.alerts.map((alert) => (

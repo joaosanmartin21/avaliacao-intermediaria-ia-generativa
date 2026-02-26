@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import AssistantScreen from "./components/AssistantScreen";
 import ChecklistSection from "./components/ChecklistSection";
 import FreezerMappingScreen from "./components/FreezerMappingScreen";
@@ -83,7 +83,7 @@ export default function App() {
     <>
       <header className="top-nav">
         <div className="top-nav-inner">
-          <a className="brand" href="#" aria-label="Pagina inicial 60 Sabores">
+          <a className="brand" href="#" aria-label="Página inicial 60 Sabores">
             <img className="brand-logo" src="/logo-60-sabores.jpeg" alt="Logo 60 Sabores" />
           </a>
 

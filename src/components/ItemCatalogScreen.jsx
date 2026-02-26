@@ -28,7 +28,7 @@ export default function ItemCatalogScreen() {
         <p className="eyebrow">Estoque</p>
         <h1>Cadastro de Itens</h1>
         <p className="hero-copy">
-          Cadastre e atualize os itens da loja com nome e preco unitario.
+          Cadastre e atualize os itens da loja com nome e preço unitário.
         </p>
         <div className="mapping-summary">
           <span>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 
 function countFilledSlots(slots) {
   return slots.filter((slot) => slot.flavor.trim().length > 0).length;
@@ -55,7 +55,7 @@ export default function FreezerSortableList({
     <section className="mapping-card freezer-list-card">
       <header className="mapping-card-header">
         <h3>Freezers da loja</h3>
-        <p>Arraste para reordenar conforme a posicao real da loja.</p>
+        <p>Arraste para reordenar conforme a posição real da loja.</p>
       </header>
 
       <div className="freezer-list">

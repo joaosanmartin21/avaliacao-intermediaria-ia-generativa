@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { formatCurrencyBRL } from "../utils/formatters";
 
 export default function InventoryItemList({ items, onUpdateItem, onDeleteItem }) {
@@ -45,7 +45,7 @@ export default function InventoryItemList({ items, onUpdateItem, onDeleteItem })
       cancelEdit();
     } catch (error) {
       setFeedbackType("error");
-      setFeedback(error?.message || "Nao foi possivel atualizar o item.");
+      setFeedback(error?.message || "Não foi possível atualizar o item.");
     } finally {
       setIsSaving(false);
     }
@@ -53,7 +53,7 @@ export default function InventoryItemList({ items, onUpdateItem, onDeleteItem })
 
   async function handleDelete(item) {
     const confirmed = window.confirm(
-      `Deseja excluir o item "${item.name}"? Ele deixara de aparecer em novos pedidos.`
+      `Deseja excluir o item "${item.name}"? Ele deixará de aparecer em novos pedidos.`
     );
     if (!confirmed) {
       return;
@@ -68,10 +68,10 @@ export default function InventoryItemList({ items, onUpdateItem, onDeleteItem })
         cancelEdit();
       }
       setFeedbackType("success");
-      setFeedback("Item excluido com sucesso.");
+      setFeedback("Item excluído com sucesso.");
     } catch (error) {
       setFeedbackType("error");
-      setFeedback(error?.message || "Nao foi possivel excluir o item.");
+      setFeedback(error?.message || "Não foi possível excluir o item.");
     } finally {
       setIsDeleting(false);
     }
@@ -81,7 +81,7 @@ export default function InventoryItemList({ items, onUpdateItem, onDeleteItem })
     <section className="mapping-card inventory-card">
       <header className="mapping-card-header">
         <h3>Lista de itens cadastrados</h3>
-        <p>Edite nome e preco diretamente para manter o estoque atualizado.</p>
+        <p>Edite nome e preço diretamente para manter o estoque atualizado.</p>
       </header>
 
       {sortedItems.length === 0 ? (
@@ -92,8 +92,8 @@ export default function InventoryItemList({ items, onUpdateItem, onDeleteItem })
             <thead>
               <tr>
                 <th>Nome</th>
-                <th>Preco</th>
-                <th>Acoes</th>
+                <th>Preço</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>

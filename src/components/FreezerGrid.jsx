@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { needsRestock } from "../data/freezerDefaults";
 
 const TOP_LEVEL_OPTIONS = [
@@ -199,7 +199,7 @@ export default function FreezerGrid({
                     />
                   ) : (
                     <span className="slot-flavor">
-                      {slot.flavor.trim() ? slot.flavor : "Sabor nao definido"}
+                      {slot.flavor.trim() ? slot.flavor : "Sabor não definido"}
                     </span>
                   )}
 

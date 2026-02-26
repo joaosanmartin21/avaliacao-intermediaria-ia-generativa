@@ -1,4 +1,4 @@
-import { jsPDF } from "jspdf";
+﻿import { jsPDF } from "jspdf";
 
 function toArray(value) {
   return Array.isArray(value) ? value : [];
@@ -18,7 +18,7 @@ function formatDate(dateText) {
   if (!Number.isNaN(parsed.getTime())) {
     return parsed.toLocaleString("pt-BR");
   }
-  return "Data nao informada";
+  return "Data não informada";
 }
 
 function buildFilename(generatedAt) {
@@ -132,7 +132,7 @@ export function downloadShoppingReportPdf({ report, meta }) {
   addSpacer(10);
 
   if (byFreezer.length === 0) {
-    writeText("Nenhum slot com reposicao no momento.", { fontSize: 11 });
+    writeText("Nenhum slot com reposição no momento.", { fontSize: 11 });
     doc.save(buildFilename(meta?.generatedAt));
     return;
   }
@@ -159,13 +159,13 @@ export function downloadShoppingReportPdf({ report, meta }) {
     writeText(`Freezer ${freezerLabel}`, { fontSize: 12, bold: true });
 
     if (slots.length === 0) {
-      writeText("Sem reposicao neste freezer.", { fontSize: 10, indent: 12 });
+      writeText("Sem reposição neste freezer.", { fontSize: 10, indent: 12 });
       continue;
     }
 
     for (const slot of slots) {
       const position = Number.parseInt(slot?.position, 10) || 0;
-      const flavor = sanitizeText(slot?.flavor, "Sabor nao definido");
+      const flavor = sanitizeText(slot?.flavor, "Sabor não definido");
       const boxes = Math.max(1, Number.parseInt(slot?.boxesNeedingRestock, 10) || 1);
 
       writeText(
@@ -177,7 +177,7 @@ export function downloadShoppingReportPdf({ report, meta }) {
     addSpacer(3);
     writeText("Total por sabor:", { fontSize: 10, bold: true, indent: 12 });
     for (const item of flavorTotals) {
-      const flavor = sanitizeText(item?.flavor, "Sabor nao definido");
+      const flavor = sanitizeText(item?.flavor, "Sabor não definido");
       const boxes = Math.max(1, Number.parseInt(item?.boxesNeedingRestock, 10) || 1);
       writeText(`${flavor}: ${boxes} caixa(s)`, { fontSize: 9, indent: 20 });
     }
@@ -193,7 +193,7 @@ export function downloadShoppingReportPdf({ report, meta }) {
   addSpacer(10);
 
   if (alphabeticalFlavors.length === 0) {
-    writeText("Nenhum sabor com reposicao no momento.", { fontSize: 11 });
+    writeText("Nenhum sabor com reposição no momento.", { fontSize: 11 });
   } else {
     for (const item of alphabeticalFlavors) {
       writeText(`${item.flavor}: ${item.boxes} caixa(s)`, {

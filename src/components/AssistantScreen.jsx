@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import AssistantChatShell from "./AssistantChatShell";
 import MonthlyCostMockCard from "./MonthlyCostMockCard";
@@ -45,9 +45,9 @@ function normalizeMonthRef(monthRef) {
 
 function buildMockAssistantReply(monthRef) {
   return [
-    "Assistente local indisponivel no momento.",
-    `Mes analisado: ${monthRef}.`,
-    "Verifique se o Ollama esta ativo e tente novamente.",
+    "Assistente local indisponível no momento.",
+    `Mês analisado: ${monthRef}.`,
+    "Verifique se o Ollama está ativo e tente novamente.",
   ].join(" ");
 }
 
@@ -74,7 +74,7 @@ function buildOrdersSummary(orders, monthRef) {
       const name =
         typeof line?.itemNameSnapshot === "string" && line.itemNameSnapshot.trim()
           ? line.itemNameSnapshot.trim()
-          : "Item nao identificado";
+          : "Item não identificado";
       const quantity = Math.max(0, toInteger(line?.quantity));
       const lineTotal = toMoney(line?.lineTotal);
       const current = aggregatedByItem.get(name) ?? {
@@ -111,7 +111,7 @@ function buildItemsSummary(items) {
       name:
         typeof item?.name === "string" && item.name.trim()
           ? item.name.trim()
-          : "Item nao identificado",
+          : "Item não identificado",
       unitPrice: toMoney(item?.unitPrice),
     }))
     .sort((left, right) => right.unitPrice - left.unitPrice);
@@ -367,15 +367,15 @@ export default function AssistantScreen() {
         <p className="eyebrow">Tela 4</p>
         <h1>Assistente de Estoque com IA Local (Ollama)</h1>
         <p className="hero-copy">
-          Chat operacional com modelo local, tools de negocio e resposta estruturada
-          para apoio a custo e reposicao.
+          Chat operacional com modelo local, tools de negócio e resposta estruturada
+          para apoio a custo e reposição.
         </p>
         <div className="mapping-summary">
           <span>
             Conversas: <strong>{conversations.length}</strong>
           </span>
           <span>
-            Pedidos no mes: <strong>{monthlyOrders.length}</strong>
+            Pedidos no mês: <strong>{monthlyOrders.length}</strong>
           </span>
           <span>
             Itens ativos: <strong>{items.length}</strong>

@@ -24,7 +24,7 @@ Mostre itens mais caros para eu revisar com fornecedor.
 
 ### Comportamento esperado
 - Chamar `get_items_catalog` com limite.
-- Destacar itens com maior preco unitario.
+- Destacar itens com maior preço unitario.
 - Sugerir acao de negociacao e revisao de margem.
 
 ## Exemplo 4 - Contexto insuficiente

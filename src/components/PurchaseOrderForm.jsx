@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { formatCurrencyBRL } from "../utils/formatters";
 
 function createLine() {
@@ -82,7 +82,7 @@ export default function PurchaseOrderForm({ items, onCreateOrder, monthRef }) {
       );
     } catch (error) {
       setFeedbackType("error");
-      setFeedback(error?.message || "Nao foi possivel salvar o pedido.");
+      setFeedback(error?.message || "Não foi possível salvar o pedido.");
     } finally {
       setIsSaving(false);
     }

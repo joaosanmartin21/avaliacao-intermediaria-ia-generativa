@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 
 export default function InventoryItemForm({ onCreateItem }) {
   const [name, setName] = useState("");
@@ -23,7 +23,7 @@ export default function InventoryItemForm({ onCreateItem }) {
       setFeedback("Item cadastrado com sucesso.");
     } catch (error) {
       setFeedbackType("error");
-      setFeedback(error?.message || "Nao foi possivel cadastrar o item.");
+      setFeedback(error?.message || "Não foi possível cadastrar o item.");
     } finally {
       setIsSaving(false);
     }
@@ -33,7 +33,7 @@ export default function InventoryItemForm({ onCreateItem }) {
     <section className="mapping-card inventory-card">
       <header className="mapping-card-header">
         <h3>Cadastrar item</h3>
-        <p>Adicione itens gerais de estoque com nome e preco unitario.</p>
+        <p>Adicione itens gerais de estoque com nome e preço unitário.</p>
       </header>
 
       <form className="inventory-form" onSubmit={handleSubmit}>
@@ -50,7 +50,7 @@ export default function InventoryItemForm({ onCreateItem }) {
         </label>
 
         <label>
-          Preco unitario (R$)
+          Preço unitário (R$)
           <input
             type="number"
             value={price}

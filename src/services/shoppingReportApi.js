@@ -1,4 +1,4 @@
-function getApiBaseUrl() {
+﻿function getApiBaseUrl() {
   const configured = import.meta.env.VITE_ASSISTANT_API_URL;
   if (typeof configured === "string" && configured.trim()) {
     return configured.trim().replace(/\/+$/, "");
@@ -18,7 +18,7 @@ export async function requestShoppingReport({ context }) {
   });
 
   if (!response.ok) {
-    throw new Error(`Falha no endpoint de relatorio (${response.status}).`);
+    throw new Error(`Falha no endpoint de relatório (${response.status}).`);
   }
 
   return response.json();

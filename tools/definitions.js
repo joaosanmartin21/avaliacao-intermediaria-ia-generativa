@@ -46,7 +46,7 @@ export const assistantTools = [
     function: {
       name: TOOL_NAMES.GET_ITEMS_CATALOG,
       description:
-        "Retorna o catalogo de itens ativos com preco unitario para apoiar recomendacoes.",
+        "Retorna o catálogo de itens ativos com preço unitário para apoiar recomendações.",
       parameters: {
         type: "object",
         properties: {
@@ -66,7 +66,7 @@ export const assistantTools = [
     function: {
       name: TOOL_NAMES.ESTIMATE_MONTHLY_COST,
       description:
-        "Estima custo mensal com base em pedidos, pressao de reposicao e preco medio dos itens.",
+        "Estima custo mensal com base em pedidos e preço médio dos itens.",
       parameters: {
         type: "object",
         properties: {

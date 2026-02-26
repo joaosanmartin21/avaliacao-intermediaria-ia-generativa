@@ -1,4 +1,4 @@
-import { db } from "../db/appDb";
+﻿import { db } from "../db/appDb";
 
 const VALID_ORDER_STATUSES = new Set(["draft", "sent"]);
 
@@ -17,7 +17,7 @@ function normalizePrice(value) {
       : Number.parseFloat(String(value).replace(",", "."));
 
   if (!Number.isFinite(numeric) || numeric < 0) {
-    throw new Error("Informe um preco valido maior ou igual a zero.");
+    throw new Error("Informe um preço válido maior ou igual a zero.");
   }
 
   return Math.round(numeric * 100) / 100;
@@ -55,7 +55,7 @@ function normalizeMonthRef(monthRef) {
 async function ensureUniqueName(nameLower, ignoreId = null) {
   const existing = await db.items.where("nameLower").equals(nameLower).first();
   if (existing && existing.isActive && existing.id !== ignoreId) {
-    throw new Error("Ja existe um item ativo com esse nome.");
+    throw new Error("Já existe um item ativo com esse nome.");
   }
 }
 
@@ -79,7 +79,7 @@ export async function createItem({ name, unitPrice }) {
 
 export async function updateItem(itemId, { name, unitPrice }) {
   if (!Number.isFinite(itemId)) {
-    throw new Error("Item invalido.");
+    throw new Error("Item inválido.");
   }
 
   const normalizedName = normalizeItemName(name);
@@ -96,13 +96,13 @@ export async function updateItem(itemId, { name, unitPrice }) {
   });
 
   if (!updatedCount) {
-    throw new Error("Nao foi possivel atualizar este item.");
+    throw new Error("Não foi possível atualizar este item.");
   }
 }
 
 export async function deleteItem(itemId) {
   if (!Number.isFinite(itemId)) {
-    throw new Error("Item invalido.");
+    throw new Error("Item inválido.");
   }
 
   const updatedCount = await db.items.update(itemId, {
@@ -111,7 +111,7 @@ export async function deleteItem(itemId) {
   });
 
   if (!updatedCount) {
-    throw new Error("Nao foi possivel excluir este item.");
+    throw new Error("Não foi possível excluir este item.");
   }
 }
 
@@ -155,7 +155,7 @@ export async function createPurchaseOrder({ lines, status, monthRef }) {
   const normalizedLines = normalizeOrderLines(lines);
 
   if (normalizedLines.length === 0) {
-    throw new Error("Adicione pelo menos um item valido no pedido.");
+    throw new Error("Adicione pelo menos um item válido no pedido.");
   }
 
   const itemIds = normalizedLines.map((line) => line.itemId);
@@ -171,7 +171,7 @@ export async function createPurchaseOrder({ lines, status, monthRef }) {
   const orderLines = normalizedLines.map((line) => {
     const item = itemById.get(line.itemId);
     if (!item) {
-      throw new Error("Um ou mais itens nao estao mais ativos.");
+      throw new Error("Um ou mais itens não estão mais ativos.");
     }
 
     const lineTotal = Math.round(item.unitPrice * line.quantity * 100) / 100;
@@ -220,11 +220,11 @@ export async function createPurchaseOrder({ lines, status, monthRef }) {
 
 export async function updatePurchaseOrderStatus(orderId, status) {
   if (!Number.isFinite(orderId)) {
-    throw new Error("Pedido invalido.");
+    throw new Error("Pedido inválido.");
   }
 
   if (!VALID_ORDER_STATUSES.has(status)) {
-    throw new Error("Status de pedido invalido.");
+    throw new Error("Status de pedido inválido.");
   }
 
   const updatedCount = await db.purchaseOrders.update(orderId, {
@@ -232,7 +232,7 @@ export async function updatePurchaseOrderStatus(orderId, status) {
   });
 
   if (!updatedCount) {
-    throw new Error("Nao foi possivel atualizar o status do pedido.");
+    throw new Error("Não foi possível atualizar o status do pedido.");
   }
 }
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { formatDateTime } from "../utils/formatters";
 
 function formatUsedTools(message) {
@@ -36,7 +36,7 @@ export default function AssistantChatShell({
       await onSendMessage(trimmed);
       setDraft("");
     } catch (error) {
-      setErrorMessage(error?.message || "Nao foi possivel enviar a mensagem.");
+      setErrorMessage(error?.message || "Não foi possível enviar a mensagem.");
     }
   }
 
@@ -45,7 +45,7 @@ export default function AssistantChatShell({
       <header className="mapping-card-header">
         <h3>Assistente de estoque</h3>
         <p>
-          IA local via Ollama com respostas estruturadas e historico persistido
+          IA local via Ollama com respostas estruturadas e histórico persistido
           no navegador.
         </p>
       </header>
@@ -55,7 +55,7 @@ export default function AssistantChatShell({
           <p className="assistant-empty-thread">
             {hasConversation
               ? "Envie uma mensagem para iniciar esta conversa."
-              : "Crie uma conversa para comecar o chat."}
+              : "Crie uma conversa para começar o chat."}
           </p>
         ) : (
           messages.map((message) => {
@@ -80,7 +80,7 @@ export default function AssistantChatShell({
           type="text"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
-          placeholder="Ex.: Qual meu custo estimado deste mes e o que priorizar na compra?"
+          placeholder="Ex.: Qual meu custo estimado deste mês e o que priorizar na compra?"
           disabled={isSending}
         />
         <button type="submit" className="mapping-primary-button" disabled={isSending}>

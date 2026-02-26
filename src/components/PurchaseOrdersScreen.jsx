@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import PurchaseOrderForm from "./PurchaseOrderForm";
 import PurchaseOrderHistory from "./PurchaseOrderHistory";
@@ -48,7 +48,7 @@ export default function PurchaseOrdersScreen() {
       setHistoryFeedback("Pedido atualizado para enviado.");
     } catch (error) {
       setHistoryFeedbackType("error");
-      setHistoryFeedback(error?.message || "Nao foi possivel atualizar o pedido.");
+      setHistoryFeedback(error?.message || "Não foi possível atualizar o pedido.");
     }
   }
 
@@ -56,17 +56,17 @@ export default function PurchaseOrdersScreen() {
     <section className="inventory-shell">
       <header className="mapping-hero">
         <p className="eyebrow">Estoque</p>
-        <h1>Pedidos do Mes</h1>
+        <h1>Pedidos do Mês</h1>
         <p className="hero-copy">
-          Selecione o mes, monte o pedido com os itens cadastrados e acompanhe o
-          historico realizado.
+          Selecione o mês, monte o pedido com os itens cadastrados e acompanhe o
+          histórico realizado.
         </p>
         <div className="mapping-summary">
           <span>
-            Mes selecionado: <strong>{formatMonthRef(monthRef)}</strong>
+            Mês selecionado: <strong>{formatMonthRef(monthRef)}</strong>
           </span>
           <span>
-            Pedidos no mes: <strong>{orders.length}</strong>
+            Pedidos no mês: <strong>{orders.length}</strong>
           </span>
         </div>
       </header>
@@ -74,12 +74,12 @@ export default function PurchaseOrdersScreen() {
       <section className="inventory-main inventory-main-single">
         <section className="mapping-card inventory-card">
           <header className="mapping-card-header">
-            <h3>Mes de referencia</h3>
-            <p>Escolha o mes para registrar e consultar os pedidos.</p>
+            <h3>Mês de referência</h3>
+            <p>Escolha o mês para registrar e consultar os pedidos.</p>
           </header>
 
           <label className="inventory-month-filter">
-            Mes
+            Mês
             <input
               type="month"
               value={monthRef}

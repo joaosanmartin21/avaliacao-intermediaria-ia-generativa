@@ -1,12 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import {
-  buildShoppingSummary,
   createFreezer,
   createInitialMappingState,
-  needsRestock,
   reorderFreezers,
 } from "../data/freezerDefaults";
-import { requestShoppingReport } from "../services/shoppingReportApi";
+import { buildDeterministicShoppingReport } from "../utils/deterministicShoppingReport";
 import {
   loadFreezerMappingState,
   saveFreezerMappingState,
@@ -36,7 +34,7 @@ function getPriorityLabel(priority) {
   if (priority === "baixa") {
     return "Baixa";
   }
-  return "Media";
+  return "Média";
 }
 
 export default function FreezerMappingScreen() {
@@ -47,7 +45,6 @@ export default function FreezerMappingScreen() {
   });
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   const [shoppingReport, setShoppingReport] = useState(null);
-  const [shoppingReportMeta, setShoppingReportMeta] = useState(null);
   const [reportError, setReportError] = useState("");
 
   useEffect(() => {
@@ -84,39 +81,6 @@ export default function FreezerMappingScreen() {
       totalFreezers: mappingState.freezers.length,
     };
   }, [mappingState.freezers]);
-
-  const shoppingSummary = useMemo(() => {
-    return buildShoppingSummary(mappingState.freezers);
-  }, [mappingState.freezers]);
-
-  const shoppingReportContext = useMemo(() => {
-    const freezers = mappingState.freezers.map((freezer) => {
-      const displayTitle = getFreezerDisplayTitle(freezer);
-      const slots = Array.isArray(freezer.slots) ? freezer.slots : [];
-
-      return {
-        title: displayTitle,
-        order: freezer.order,
-        capacity: freezer.capacity,
-        mappedSlots: countMappedSlots(slots),
-        lowStockSlots: slots
-          .filter((slot) => needsRestock(slot))
-          .map((slot) => ({
-            position: slot.position,
-            flavor: slot.flavor,
-            topLevel: slot.topLevel,
-            bottomLevel: slot.bottomLevel,
-          })),
-      };
-    });
-
-    return {
-      generatedAt: new Date().toISOString(),
-      mappingSummary,
-      shoppingSummary,
-      freezers,
-    };
-  }, [mappingState.freezers, mappingSummary, shoppingSummary]);
 
   function handleSetupConfirm({ countOf12, countOf8 }) {
     const initialState = createInitialMappingState(countOf12, countOf8);
@@ -295,49 +259,23 @@ export default function FreezerMappingScreen() {
     }));
   }
 
-  async function handleGenerateShoppingReport() {
+  function handleGenerateShoppingReport() {
     setIsGeneratingReport(true);
     setReportError("");
 
     try {
-      const payload = await requestShoppingReport({
-        context: shoppingReportContext,
-      });
-
-      const report =
-        typeof payload?.report === "object" &&
-        payload.report !== null &&
-        !Array.isArray(payload.report)
-          ? payload.report
-          : null;
-
-      if (!report) {
-        throw new Error("Resposta de relatorio invalida.");
-      }
-
+      const report = buildDeterministicShoppingReport(mappingState.freezers);
       setShoppingReport(report);
-      const reportMeta = {
-        provider:
-          typeof payload.provider === "string" && payload.provider.trim()
-            ? payload.provider.trim()
-            : "desconhecido",
-        model:
-          typeof payload.model === "string" && payload.model.trim()
-            ? payload.model.trim()
-            : "desconhecido",
-        generatedAt:
-          typeof payload.generatedAt === "string" && payload.generatedAt.trim()
-            ? payload.generatedAt.trim()
-            : new Date().toISOString(),
-      };
-      setShoppingReportMeta(reportMeta);
+
       downloadShoppingReportPdf({
         report,
-        meta: reportMeta,
+        meta: {
+          generatedAt: new Date().toISOString(),
+        },
       });
     } catch (error) {
       setReportError(
-        error?.message || "Nao foi possivel gerar o relatorio com IA."
+        error?.message || "Não foi possível gerar o relatório de compras."
       );
     } finally {
       setIsGeneratingReport(false);
@@ -351,8 +289,8 @@ export default function FreezerMappingScreen() {
           <p className="eyebrow">Tela 2</p>
           <h1>Relatório de Compras de Sorvetes</h1>
           <p className="hero-copy">
-            Organize os freezers e niveis de estoque para gerar relatorio inteligente
-            de compras com IA.
+            Organize os freezers e níveis de estoque para gerar um relatório
+            simples de compras.
           </p>
           <div className="mapping-summary">
             <span>
@@ -379,7 +317,7 @@ export default function FreezerMappingScreen() {
 
             <section className="mapping-card freezer-actions-card">
               <header className="mapping-card-header">
-                <h3>Acoes Rapidas</h3>
+                <h3>Ações Rápidas</h3>
                 <p>Gerencie o freezer selecionado sem abrir painel extra.</p>
               </header>
               <div className="freezer-manager-actions">
@@ -414,7 +352,7 @@ export default function FreezerMappingScreen() {
             <section className="mapping-card shopping-summary-card">
               <header className="mapping-card-header">
                 <h3>Relatório de Compras</h3>
-                <p>Gere um relatorio estruturado com prioridades de compra por sabor.</p>
+                <p>Gere a listagem por freezer e baixe o PDF para compra.</p>
               </header>
 
               <button
@@ -424,19 +362,12 @@ export default function FreezerMappingScreen() {
                 disabled={isGeneratingReport || mappingState.freezers.length === 0}
               >
                 {isGeneratingReport
-                  ? "Gerando relatorio com IA..."
-                  : "Gerar Relatorio e Baixar PDF"}
+                  ? "Gerando relatório..."
+                  : "Gerar Relatório e Baixar PDF"}
               </button>
 
               {reportError ? (
                 <p className="inventory-feedback error">{reportError}</p>
-              ) : null}
-
-              {shoppingReportMeta ? (
-                <p className="shopping-report-meta">
-                  Fonte: <strong>{shoppingReportMeta.provider}</strong> | Modelo:{" "}
-                  <strong>{shoppingReportMeta.model}</strong>
-                </p>
               ) : null}
 
               {shoppingReport ? (
@@ -454,7 +385,7 @@ export default function FreezerMappingScreen() {
                       <strong>{shoppingReport.overview?.totalFlavorsToBuy ?? 0}</strong>
                     </article>
                     <article className="shopping-overview-item">
-                      <span>Slots com reposicao</span>
+                      <span>Slots com reposição</span>
                       <strong>
                         {shoppingReport.overview?.slotsNeedingRestock ?? 0}
                       </strong>
@@ -480,21 +411,10 @@ export default function FreezerMappingScreen() {
                       </li>
                     ))}
                   </ul>
-
-                  {(shoppingReport.warnings ?? []).length > 0 ? (
-                    <>
-                      <h4 className="shopping-section-title">Alertas</h4>
-                      <ul className="shopping-locations shopping-warning-list">
-                        {shoppingReport.warnings.map((warning) => (
-                          <li key={warning}>{warning}</li>
-                        ))}
-                      </ul>
-                    </>
-                  ) : null}
                 </>
               ) : (
                 <p className="shopping-empty">
-                  Clique no botao para gerar o relatorio de compras com IA.
+                  Clique no botão para gerar o relatório de compras.
                 </p>
               )}
             </section>
@@ -509,4 +429,3 @@ export default function FreezerMappingScreen() {
     </>
   );
 }
-

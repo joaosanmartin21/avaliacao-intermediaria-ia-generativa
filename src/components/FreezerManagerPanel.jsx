@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 
 export default function FreezerManagerPanel({
   freezer,
@@ -47,12 +47,12 @@ export default function FreezerManagerPanel({
     <section className="mapping-card freezer-manager-card">
       <header className="mapping-card-header">
         <h3>Detalhes do freezer</h3>
-        <p>Edite o titulo e a quantidade de sabores deste freezer.</p>
+        <p>Edite o título e a quantidade de sabores deste freezer.</p>
       </header>
 
       <form className="freezer-manager-form" onSubmit={handleSubmit}>
         <label>
-          Titulo
+          Título
           <input
             type="text"
             value={title}

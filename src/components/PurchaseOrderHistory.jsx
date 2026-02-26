@@ -1,4 +1,4 @@
-import { formatCurrencyBRL, formatDateTime } from "../utils/formatters";
+﻿import { formatCurrencyBRL, formatDateTime } from "../utils/formatters";
 
 function getStatusLabel(status) {
   if (status === "sent") {
@@ -11,12 +11,12 @@ export default function PurchaseOrderHistory({ orders, onMarkAsSent }) {
   return (
     <section className="mapping-card inventory-card">
       <header className="mapping-card-header">
-        <h3>Historico de pedidos</h3>
+        <h3>Histórico de pedidos</h3>
         <p>Pedidos registrados para acompanhamento e controle futuro de custos.</p>
       </header>
 
       {orders.length === 0 ? (
-        <p className="inventory-empty">Nenhum pedido encontrado neste periodo.</p>
+        <p className="inventory-empty">Nenhum pedido encontrado neste período.</p>
       ) : (
         <div className="order-history-list">
           {orders.map((order) => (

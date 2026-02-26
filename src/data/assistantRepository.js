@@ -1,4 +1,4 @@
-import { db } from "../db/appDb";
+﻿import { db } from "../db/appDb";
 
 function getNowIso() {
   return new Date().toISOString();
@@ -44,7 +44,7 @@ function normalizeMetadata(metadata) {
 
 export async function addMessage({ conversationId, role, content, metadata = null }) {
   if (!Number.isFinite(conversationId)) {
-    throw new Error("Conversa invalida.");
+    throw new Error("Conversa inválida.");
   }
 
   const normalizedContent = typeof content === "string" ? content.trim() : "";
