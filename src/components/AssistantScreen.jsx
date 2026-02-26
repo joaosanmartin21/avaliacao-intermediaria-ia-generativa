@@ -1,7 +1,6 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import AssistantChatShell from "./AssistantChatShell";
-import MonthlyCostMockCard from "./MonthlyCostMockCard";
 import {
   addMessage,
   createConversation,
@@ -16,6 +15,7 @@ import {
 import { requestAssistantReply } from "../services/assistantApi";
 import { loadFreezerMappingState } from "../utils/freezerStorage";
 import { formatDateTime, getCurrentMonthRef } from "../utils/formatters";
+import { extractMonthRefFromMessage } from "../utils/monthRefResolver";
 
 function toMoney(value) {
   const numeric = Number.parseFloat(String(value));
@@ -234,7 +234,6 @@ function buildAssistantMetadata(endpointResponse, monthRef) {
 
 export default function AssistantScreen() {
   const [selectedConversationId, setSelectedConversationId] = useState(null);
-  const [monthRef, setMonthRef] = useState(getCurrentMonthRef());
   const [isSending, setIsSending] = useState(false);
 
   const conversations = useLiveQuery(
@@ -261,18 +260,6 @@ export default function AssistantScreen() {
       }
     },
     [selectedConversationId],
-    []
-  );
-  const monthlyOrders = useLiveQuery(
-    async () => {
-      try {
-        return await listPurchaseOrdersByMonth(monthRef);
-      } catch (error) {
-        console.error(error);
-        return [];
-      }
-    },
-    [monthRef],
     []
   );
   const items = useLiveQuery(
@@ -326,28 +313,38 @@ export default function AssistantScreen() {
 
       let assistantContent = "";
       let assistantMetadata = null;
+      const fallbackMonthRef = getCurrentMonthRef();
+      const resolvedMonthRef = extractMonthRefFromMessage(content, fallbackMonthRef);
+      let ordersForContext = [];
 
       try {
+        try {
+          ordersForContext = await listPurchaseOrdersByMonth(resolvedMonthRef);
+        } catch (error) {
+          console.error(error);
+          ordersForContext = [];
+        }
+
         const context = buildAssistantContext({
-          monthRef,
-          orders: monthlyOrders,
+          monthRef: resolvedMonthRef,
+          orders: ordersForContext,
           items,
         });
         const endpointResponse = await requestAssistantReply({
           message: content,
-          monthRef,
+          monthRef: resolvedMonthRef,
           context,
         });
 
         assistantContent =
           typeof endpointResponse.reply === "string" && endpointResponse.reply.trim()
             ? endpointResponse.reply.trim()
-            : buildMockAssistantReply(monthRef);
-        assistantMetadata = buildAssistantMetadata(endpointResponse, monthRef);
+            : buildMockAssistantReply(resolvedMonthRef);
+        assistantMetadata = buildAssistantMetadata(endpointResponse, resolvedMonthRef);
       } catch (error) {
         console.error(error);
-        assistantContent = buildMockAssistantReply(monthRef);
-        assistantMetadata = buildAssistantMetadata(null, monthRef);
+        assistantContent = buildMockAssistantReply(resolvedMonthRef);
+        assistantMetadata = buildAssistantMetadata(null, resolvedMonthRef);
       }
 
       await addMessage({
@@ -373,12 +370,6 @@ export default function AssistantScreen() {
         <div className="mapping-summary">
           <span>
             Conversas: <strong>{conversations.length}</strong>
-          </span>
-          <span>
-            Pedidos no mês: <strong>{monthlyOrders.length}</strong>
-          </span>
-          <span>
-            Itens ativos: <strong>{items.length}</strong>
           </span>
         </div>
       </header>
@@ -420,11 +411,6 @@ export default function AssistantScreen() {
         </aside>
 
         <section className="assistant-main">
-          <MonthlyCostMockCard
-            monthRef={monthRef}
-            onChangeMonth={setMonthRef}
-            orders={monthlyOrders}
-          />
           <AssistantChatShell
             messages={messages}
             onSendMessage={handleSendMessage}
