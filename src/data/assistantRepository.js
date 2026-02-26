@@ -36,7 +36,13 @@ function normalizeRole(role) {
   return role === "assistant" ? "assistant" : "user";
 }
 
-export async function addMessage({ conversationId, role, content }) {
+function normalizeMetadata(metadata) {
+  return typeof metadata === "object" && metadata !== null && !Array.isArray(metadata)
+    ? metadata
+    : null;
+}
+
+export async function addMessage({ conversationId, role, content, metadata = null }) {
   if (!Number.isFinite(conversationId)) {
     throw new Error("Conversa invalida.");
   }
@@ -47,11 +53,20 @@ export async function addMessage({ conversationId, role, content }) {
   }
 
   const now = getNowIso();
-  const messageId = await db.assistantMessages.add({
+  const normalizedMetadata = normalizeMetadata(metadata);
+  const payload = {
     conversationId,
     role: normalizeRole(role),
     content: normalizedContent,
     createdAt: now,
+  };
+
+  if (normalizedMetadata) {
+    payload.metadata = normalizedMetadata;
+  }
+
+  const messageId = await db.assistantMessages.add({
+    ...payload,
   });
 
   await db.assistantConversations.update(conversationId, { updatedAt: now });

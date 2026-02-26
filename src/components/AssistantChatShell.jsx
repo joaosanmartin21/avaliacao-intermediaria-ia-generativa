@@ -1,6 +1,18 @@
 import { useState } from "react";
 import { formatDateTime } from "../utils/formatters";
 
+function formatUsedTools(message) {
+  const usedTools = Array.isArray(message?.metadata?.usedTools)
+    ? message.metadata.usedTools.filter((toolName) => typeof toolName === "string" && toolName.trim())
+    : [];
+
+  if (usedTools.length === 0) {
+    return "";
+  }
+
+  return `Tools: ${usedTools.join(", ")}`;
+}
+
 export default function AssistantChatShell({
   messages,
   onSendMessage,
@@ -33,8 +45,8 @@ export default function AssistantChatShell({
       <header className="mapping-card-header">
         <h3>Assistente de estoque</h3>
         <p>
-          Estrutura pronta para LLM. Nesta fase, as respostas sao simuladas e
-          persistidas localmente.
+          IA local via Ollama com respostas estruturadas e historico persistido
+          no navegador.
         </p>
       </header>
 
@@ -46,12 +58,20 @@ export default function AssistantChatShell({
               : "Crie uma conversa para comecar o chat."}
           </p>
         ) : (
-          messages.map((message) => (
-            <article key={message.id} className={`assistant-message ${message.role}`}>
-              <p>{message.content}</p>
-              <small>{formatDateTime(message.createdAt)}</small>
-            </article>
-          ))
+          messages.map((message) => {
+            const toolsLabel =
+              message.role === "assistant" ? formatUsedTools(message) : "";
+
+            return (
+              <article key={message.id} className={`assistant-message ${message.role}`}>
+                <p>{message.content}</p>
+                {toolsLabel ? (
+                  <span className="assistant-tools-hint">{toolsLabel}</span>
+                ) : null}
+                <small>{formatDateTime(message.createdAt)}</small>
+              </article>
+            );
+          })
         )}
       </div>
 
@@ -60,7 +80,7 @@ export default function AssistantChatShell({
           type="text"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
-          placeholder="Ex.: Me mostre o custo estimado deste mes."
+          placeholder="Ex.: Qual meu custo estimado deste mes e o que priorizar na compra?"
           disabled={isSending}
         />
         <button type="submit" className="mapping-primary-button" disabled={isSending}>

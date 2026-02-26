@@ -27,10 +27,10 @@ export default function MonthlyCostMockCard({ monthRef, onChangeMonth }) {
   return (
     <section className="mapping-card assistant-card">
       <header className="mapping-card-header">
-        <h3>Relatorio mensal (mock)</h3>
+        <h3>Painel mensal (estimativa local)</h3>
         <p>
-          Dados ficticios para validar a estrutura da Tela 4 antes da integracao
-          com IA.
+          Indicadores deterministicos para apoiar o chat com IA local e comparar
+          tendencia de custos por mes.
         </p>
       </header>
 

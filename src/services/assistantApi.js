@@ -6,7 +6,7 @@ function getApiBaseUrl() {
   return "";
 }
 
-export async function requestAssistantReply({ message, monthRef }) {
+export async function requestAssistantReply({ message, monthRef, context }) {
   const response = await fetch(`${getApiBaseUrl()}/api/assistant/chat`, {
     method: "POST",
     headers: {
@@ -15,6 +15,7 @@ export async function requestAssistantReply({ message, monthRef }) {
     body: JSON.stringify({
       message,
       monthRef,
+      context,
     }),
   });
 
