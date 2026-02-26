@@ -1,10 +1,18 @@
 import cors from "cors";
 import express from "express";
 import {
-  buildAssistantReply,
   buildMockCostReport,
   normalizeMonthRef,
+  normalizeRequestBody,
 } from "./lib/assistantMocks.js";
+import {
+  buildFallbackAssistantPayload,
+  runStockAssistant,
+} from "../agents/stockAssistantAgent.js";
+import {
+  buildFallbackShoppingReport,
+  runShoppingReportAssistant,
+} from "../agents/shoppingReportAgent.js";
 
 const app = express();
 const port = Number.parseInt(process.env.PORT ?? "8787", 10);
@@ -20,6 +28,7 @@ app.get("/", (_request, response) => {
       health: "/api/health",
       assistantChat: "/api/assistant/chat",
       monthlyCostReport: "/api/reports/cost",
+      shoppingReport: "/api/reports/shopping",
     },
   });
 });
@@ -42,16 +51,55 @@ app.post("/api/reports/cost", (request, response) => {
   });
 });
 
-app.post("/api/assistant/chat", (request, response) => {
+app.post("/api/reports/shopping", async (request, response) => {
+  const body = normalizeRequestBody(request.body);
+  const context =
+    typeof body.context === "object" && body.context !== null ? body.context : {};
+
+  try {
+    const payload = await runShoppingReportAssistant({
+      context,
+    });
+    response.json(payload);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("shopping_report_error", error);
+    response.json(
+      buildFallbackShoppingReport({
+        context,
+        reason: error instanceof Error ? error.message : "Falha no relatorio de compras.",
+      })
+    );
+  }
+});
+
+app.post("/api/assistant/chat", async (request, response) => {
   const message = typeof request.body?.message === "string" ? request.body.message : "";
   const monthRef = normalizeMonthRef(request.body?.monthRef);
+  const context =
+    typeof request.body?.context === "object" && request.body.context !== null
+      ? request.body.context
+      : {};
 
-  const payload = buildAssistantReply({ message, monthRef });
-  response.json({
-    ...payload,
-    provider: "mock-endpoint",
-    generatedAt: new Date().toISOString(),
-  });
+  try {
+    const payload = await runStockAssistant({
+      message,
+      monthRef,
+      context,
+    });
+
+    response.json(payload);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("assistant_chat_error", error);
+
+    response.json(
+      buildFallbackAssistantPayload({
+        monthRef,
+        reason: error instanceof Error ? error.message : "Falha no agente local.",
+      })
+    );
+  }
 });
 
 app.use((_request, response) => {
