@@ -9,7 +9,7 @@ function createLine() {
   };
 }
 
-export default function PurchaseOrderForm({ items, onCreateOrder }) {
+export default function PurchaseOrderForm({ items, onCreateOrder, monthRef }) {
   const [lines, setLines] = useState([createLine()]);
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -67,6 +67,7 @@ export default function PurchaseOrderForm({ items, onCreateOrder }) {
     try {
       await onCreateOrder({
         status,
+        monthRef,
         lines: lines.map((line) => ({
           itemId: Number.parseInt(line.itemId, 10),
           quantity: Number.parseInt(line.quantity, 10),

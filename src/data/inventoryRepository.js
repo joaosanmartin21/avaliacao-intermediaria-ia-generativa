@@ -41,6 +41,17 @@ function getMonthRefFromDate(date = new Date()) {
   return `${year}-${month}`;
 }
 
+function normalizeMonthRef(monthRef) {
+  if (typeof monthRef !== "string") {
+    return getMonthRefFromDate();
+  }
+
+  const trimmed = monthRef.trim();
+  return /^\d{4}-(0[1-9]|1[0-2])$/.test(trimmed)
+    ? trimmed
+    : getMonthRefFromDate();
+}
+
 async function ensureUniqueName(nameLower, ignoreId = null) {
   const existing = await db.items.where("nameLower").equals(nameLower).first();
   if (existing && existing.isActive && existing.id !== ignoreId) {
@@ -140,7 +151,7 @@ function normalizeOrderLines(lines) {
   }));
 }
 
-export async function createPurchaseOrder({ lines, status }) {
+export async function createPurchaseOrder({ lines, status, monthRef }) {
   const normalizedLines = normalizeOrderLines(lines);
 
   if (normalizedLines.length === 0) {
@@ -179,7 +190,7 @@ export async function createPurchaseOrder({ lines, status }) {
     ) / 100;
 
   const now = getNowIso();
-  const monthRef = getMonthRefFromDate();
+  const normalizedMonthRef = normalizeMonthRef(monthRef);
   const normalizedStatus = normalizeOrderStatus(status);
 
   let orderId = null;
@@ -187,7 +198,7 @@ export async function createPurchaseOrder({ lines, status }) {
   await db.transaction("rw", db.purchaseOrders, db.purchaseOrderItems, async () => {
     orderId = await db.purchaseOrders.add({
       createdAt: now,
-      monthRef,
+      monthRef: normalizedMonthRef,
       status: normalizedStatus,
       totalCost,
     });

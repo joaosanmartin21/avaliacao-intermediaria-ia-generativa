@@ -94,7 +94,11 @@ export default function PurchaseOrdersScreen() {
           ) : null}
         </section>
 
-        <PurchaseOrderForm items={items} onCreateOrder={createPurchaseOrder} />
+        <PurchaseOrderForm
+          items={items}
+          onCreateOrder={createPurchaseOrder}
+          monthRef={monthRef}
+        />
 
         <PurchaseOrderHistory
           orders={orders}
