@@ -46,6 +46,7 @@ const RESPONSE_INTENTS = new Set([
 ]);
 
 let cachedSystemPrompt = null;
+let cachedFewShotExamples = null;
 
 function normalizeMonthRef(monthRef) {
   if (typeof monthRef !== "string") {
@@ -76,6 +77,23 @@ async function loadSystemPrompt() {
   }
 
   return cachedSystemPrompt;
+}
+
+async function loadFewShotExamples() {
+  if (cachedFewShotExamples !== null) {
+    return cachedFewShotExamples;
+  }
+
+  const examplesPath = path.resolve(process.cwd(), "prompts", "few_shot_examples.md");
+  try {
+    const fileContent = await fs.readFile(examplesPath, "utf8");
+    const trimmed = fileContent.trim();
+    cachedFewShotExamples = trimmed || "";
+  } catch {
+    cachedFewShotExamples = "";
+  }
+
+  return cachedFewShotExamples;
 }
 
 function asPlainText(content) {
@@ -265,6 +283,7 @@ export async function runStockAssistant({ message, monthRef, context }) {
   const normalizedMonthRef = normalizeMonthRef(monthRef);
   const runtimeContext = normalizeRuntimeContext(context, normalizedMonthRef);
   const systemPrompt = await loadSystemPrompt();
+  const fewShotExamples = await loadFewShotExamples();
   const safeMessage =
     typeof message === "string" && message.trim() ? message.trim() : "Sem mensagem informada.";
 
@@ -279,6 +298,14 @@ export async function runStockAssistant({ message, monthRef, context }) {
       role: "system",
       content: systemPrompt,
     },
+    ...(fewShotExamples
+      ? [
+          {
+            role: "system",
+            content: `Exemplos few-shot para orientar estilo e uso de ferramentas:\n${fewShotExamples}`,
+          },
+        ]
+      : []),
     {
       role: "system",
       content: `Contexto local confiavel para ferramentas: ${JSON.stringify(runtimeContext)}`,
