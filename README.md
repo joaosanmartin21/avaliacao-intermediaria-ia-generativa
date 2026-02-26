@@ -67,7 +67,7 @@ Definidas em `tools/definitions.js` e executadas por `tools/executors.js`:
 
 Cada tool possui descricao para o modelo, schema de parametros, validacao e tratamento de erro.
 
-## 4) Estrutura do repositorio (foco avaliacao final)
+## 4) Estrutura do repositorio 
 - `prompts/system_prompt.txt`
 - `prompts/few_shot_examples.md`
 - `tools/definitions.js`
@@ -119,7 +119,7 @@ Cada tool possui descricao para o modelo, schema de parametros, validacao e trat
 
 ## 7) O que nao funcionou bem / limites
 - Qualidade depende do hardware local e da carga do Ollama.
-- Perguntas sem dados suficientes exigem resposta de limitacao (sem inventar).
+- Perguntas sem dados suficientes exigem resposta de limitacao.
 - Mesmo com prompt forte, alguns casos exigem normalizacao defensiva no backend.
 
 ## 8) Trade-offs (local vs pago)
@@ -161,8 +161,3 @@ npm run dev
 2. Perguntar reposicao semanal e validar sabores priorizados.
 3. Perguntar com tentativa de injection e validar que regras sao mantidas.
 4. Derrubar Ollama e validar fallback sem quebrar a UI.
-
-## 12) Roteiro curto de apresentacao (3 min)
-- 0:00-0:30: problema e valor.
-- 0:30-2:30: modelo, framework, prompt, tools, parametros, trade-offs.
-- 2:30-3:00: o que funcionou, limites, proximo passo.
